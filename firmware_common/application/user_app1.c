@@ -45,7 +45,7 @@ All Global variable names shall start with "G_<type>UserApp1"
 ***********************************************************************************************************************/
 /* New variables */
 volatile u32 G_u32UserApp1Flags;                          /*!< @brief Global state flags */
-
+static u8 au8UserInputBuffer[USER1_INPUT_BUFFER_SIZE];
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Existing variables (defined in other files -- should all contain the "extern" keyword) */
@@ -92,7 +92,6 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
-
   //PWMAudioSetFrequency(BUZZER1, C5);
 
   /* If good initialization, set state to Idle */
@@ -145,6 +144,9 @@ static void UserApp1SM_Idle(void)
 {
   static u16 riff[] = {C4, D4, E4, F4, G4, A4, B4, C5};
   static u8 riff_index = 0;
+  u8 u8something;
+
+  static u8 u8BufferMessage;
 
   if (IsButtonPressed(BUTTON0))
   {
@@ -155,55 +157,22 @@ static void UserApp1SM_Idle(void)
     PWMAudioOff(BUZZER1);
   }
   
-  if (WasButtonPressed(BUTTON1))
-  {
-    ButtonAcknowledge(BUTTON1);
+  //u8something = DebugScanf(au8UserInputBuffer);
 
-    if (riff_index == (u8)(sizeof(riff)/sizeof(u16)))
+  u8BufferMessage = (au8UserInputBuffer);
+  DebugPrintf(u8BufferMessage);
+  if (u8BufferMessage == C4)
     {
-      riff_index = 0;
+      PWMAudioSetFrequency(BUZZER1, C4);
     }
 
-    if (riff[riff_index] == C4)
+  if (DebugPrintf(au8UserInputBuffer) == G4)
     {
-      LedOn(BLUE0);
+      PWMAudioSetFrequency(BUZZER1, G4);
     }
-    else{
-      LedOff(BLUE0);
-    }
-
-    if (riff[riff_index] == D4)
-    {
-      LedOn(BLUE1);
-    }
-    else{
-      LedOff(BLUE1);
-    }
-
-    if (riff[riff_index] == E4)
-    {
-      LedOn(BLUE2);
-    }
-    else{
-      LedOff(BLUE2);
-    }
-
-    if (riff[riff_index] == G4)
-    {
-      LedOn(BLUE3);
-    }
-    else{
-      LedOff(BLUE3);
-    }
-
-
-    PWMAudioSetFrequency(BUZZER1, riff[riff_index]);
-
-    riff_index++;
-  }
-
   else
   {
+    PWMAudioSetFrequency(BUZZER1, G5);
   }
      
 } /* end UserApp1SM_Idle() */
