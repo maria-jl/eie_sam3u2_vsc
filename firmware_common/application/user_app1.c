@@ -92,6 +92,9 @@ Promises:
 */
 void UserApp1Initialize(void)
 {
+
+  //PWMAudioSetFrequency(BUZZER1, C5);
+
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -140,6 +143,68 @@ State Machine Function Definitions
 /* What does this state do? */
 static void UserApp1SM_Idle(void)
 {
+  static u16 riff[] = {C4, D4, E4, F4, G4, A4, B4, C5};
+  static u8 riff_index = 0;
+
+  if (IsButtonPressed(BUTTON0))
+  {
+    PWMAudioOn(BUZZER1);
+  }
+  else
+  {
+    PWMAudioOff(BUZZER1);
+  }
+  
+  if (WasButtonPressed(BUTTON1))
+  {
+    ButtonAcknowledge(BUTTON1);
+
+    if (riff_index == (u8)(sizeof(riff)/sizeof(u16)))
+    {
+      riff_index = 0;
+    }
+
+    if (riff[riff_index] == C4)
+    {
+      LedOn(BLUE0);
+    }
+    else{
+      LedOff(BLUE0);
+    }
+
+    if (riff[riff_index] == D4)
+    {
+      LedOn(BLUE1);
+    }
+    else{
+      LedOff(BLUE1);
+    }
+
+    if (riff[riff_index] == E4)
+    {
+      LedOn(BLUE2);
+    }
+    else{
+      LedOff(BLUE2);
+    }
+
+    if (riff[riff_index] == G4)
+    {
+      LedOn(BLUE3);
+    }
+    else{
+      LedOff(BLUE3);
+    }
+
+
+    PWMAudioSetFrequency(BUZZER1, riff[riff_index]);
+
+    riff_index++;
+  }
+
+  else
+  {
+  }
      
 } /* end UserApp1SM_Idle() */
      
